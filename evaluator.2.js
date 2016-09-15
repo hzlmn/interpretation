@@ -1,34 +1,34 @@
 /**
  * @class Parser
  * @param {String} program
- * 
- * Parser expect raw source string 
+ *
+ * Parser expect raw source string
  * and produce correct AST structure for it
  */
 function Parser(program) {
 
     /**
      * @property tokens
-     * 
+     *
      * Just for now `tokens` simply splitted by ws
      * both we are not interested in ws
      * in more complex examples
      * Tokenizer implemented as a separate class
      * that analyse source char by char
-     * 
+     *
      */
     this.tokens = program.split(/\s/)
 
     /**
      * @property cursor
-     * 
+     *
      * Initial position in tokens
      */
     this.cursor = 0
 
     /**
      * @property ast
-     * 
+     *
      * Initial structure of our AST
      */
     this.ast = []
@@ -36,7 +36,7 @@ function Parser(program) {
 
 /**
  * @method parse
- * 
+ *
  * `parse` base method of `Parser`,
  *  process each token and generate proper AST nodes
  */
@@ -57,10 +57,10 @@ Parser.prototype.parse = function () {
             // example ['+', value, nextValue]
             if (/[+-\/*]/.test(nextChar)) {
                 this.ast.push([
-                    nextChar, 
-                    char, 
+                    nextChar,
+                    char,
                     this.tokens[this.cursor]
-                ])    
+                ])
             }
         }
     }
@@ -73,7 +73,7 @@ Parser.prototype.parse = function () {
 /**
  * isAddition
  * @param {Program} exp
- * 
+ *
  * Check if expression is addition of numbers
  */
 function isAddition(exp) {
@@ -88,7 +88,7 @@ function isNumber(exp) {
 /**
  * isDivide
  * @param {Program} exp
- * 
+ *
  * Check if expression is dividing numbers
  */
 function isDivide(exp) {
@@ -96,10 +96,31 @@ function isDivide(exp) {
 }
 
 /**
+ * isMultiply
+ * @param {Program} exp
+ *
+ * Check if expression is multiplication operation
+ */
+function isMultiply(exp) {
+    return tagExpression('*', exp)
+}
+
+/**
+ * isDivision
+ * @param {Program} exp
+ *
+ * Check if expression is division of numbers
+ */
+function isDivision(exp) {
+    return tagExpression('/', exp)
+}
+
+
+/**
  * tagExpression
  * @param {String} tag
  * @param {Program} exp expression
- * 
+ *
  * Accept tag and expression as params
  * and check if expression has correct tag on left hand
  */
@@ -111,13 +132,13 @@ function tagExpression(tag, exp) {
 /**
  * @class Evaluator
  * @param {AbstractSyntaxTree} ast
- * 
+ *
  * Evaluate program statement by statement
  */
 function Evaluator(ast) {
     /**
-     * @property ast 
-     * 
+     * @property ast
+     *
      * AST structure of our program,
      * each element is separate statement
      */
@@ -126,27 +147,63 @@ function Evaluator(ast) {
 
 Evaluator.prototype = {
 
+    /**
+		 * @method evalNumber
+     * @param  {Program} exp
+		 *
+		 * Evaluate simple number
+     */
     evalNumber: function (exp) {
         return +exp
     },
 
+    /**
+		 * @method evalAddition
+     * @param  {Program} exp
+		 *
+		 * Evaluate addition operation
+     */
     evalAddition: function (exp) {
         return this.evaluate(exp[1]) + this.evaluate(exp[2])
     },
 
+		/**
+		 * @method evalDivide
+     * @param  {Program} exp
+		 *
+		 * Evaluate dividing operation
+     */
     evalDivide: function (exp) {
         return this.evaluate(exp[1]) - this.evaluate(exp[2])
     },
 
+		/**
+		 * @method evalMultiply
+     * @param  {Program} exp
+		 *
+		 * Evaluate multiplication operation
+     */
     evalMultiply: function (exp) {
         return this.evaluate(exp[1]) * this.evaluate(exp[2])
     },
 
-    evaluate: function (exp) {
-        var expressionType = this.getType(exp)
-        return this['eval' + expressionType](exp)  
+		/**
+		 * @method evalMultiply
+     * @param  {Program} exp
+		 *
+		 * Evaluate multiplication operation
+     */
+    evalDivision: function (exp) {
+        return this.evaluate(exp[1]) / this.evaluate(exp[2])
     },
 
+		// base method for evaluating
+    evaluate: function (exp) {
+        var expressionType = this.getType(exp)
+        return this['eval' + expressionType](exp)
+    },
+
+		// get type of expression
     getType: function (exp) {
         if (isNumber(exp)) {
             return 'Number'
@@ -163,6 +220,10 @@ Evaluator.prototype = {
         if (isMultiply(exp)) {
             return 'Multiply'
         }
+
+				if (isDivision(exp)) {
+						return 'Division'
+				}
     },
 
     eval: function () {
@@ -173,6 +234,6 @@ Evaluator.prototype = {
 }
 
 
-var ast = new Parser('2 + 1').parse()
+var ast = new Parser('2 / 4').parse()
 var ev = new Evaluator(ast)
 console.log(ev.eval())
