@@ -148,62 +148,62 @@ function Evaluator(ast) {
 Evaluator.prototype = {
 
     /**
-		 * @method evalNumber
+     * @method evalNumber
      * @param  {Program} exp
-		 *
-		 * Evaluate simple number
+     *
+     * Evaluate simple number
      */
     evalNumber: function (exp) {
         return +exp
     },
 
     /**
-		 * @method evalAddition
+     * @method evalAddition
      * @param  {Program} exp
-		 *
-		 * Evaluate addition operation
+     *
+     * Evaluate addition operation
      */
     evalAddition: function (exp) {
         return this.evaluate(exp[1]) + this.evaluate(exp[2])
     },
 
-		/**
-		 * @method evalDivide
+    /**
+     * @method evalDivide
      * @param  {Program} exp
-		 *
-		 * Evaluate dividing operation
+     *
+     * Evaluate dividing operation
      */
     evalDivide: function (exp) {
         return this.evaluate(exp[1]) - this.evaluate(exp[2])
     },
 
-		/**
-		 * @method evalMultiply
+    /**
+     * @method evalMultiply
      * @param  {Program} exp
-		 *
-		 * Evaluate multiplication operation
+     *
+     * Evaluate multiplication operation
      */
     evalMultiply: function (exp) {
         return this.evaluate(exp[1]) * this.evaluate(exp[2])
     },
 
-		/**
-		 * @method evalMultiply
+    /**
+     * @method evalMultiply
      * @param  {Program} exp
-		 *
-		 * Evaluate multiplication operation
+     *
+     * Evaluate multiplication operation
      */
     evalDivision: function (exp) {
         return this.evaluate(exp[1]) / this.evaluate(exp[2])
     },
 
-		// base method for evaluating
+    // base method for evaluating
     evaluate: function (exp) {
         var expressionType = this.getType(exp)
         return this['eval' + expressionType](exp)
     },
 
-		// get type of expression
+    // get type of expression
     getType: function (exp) {
         if (isNumber(exp)) {
             return 'Number'
@@ -221,9 +221,9 @@ Evaluator.prototype = {
             return 'Multiply'
         }
 
-				if (isDivision(exp)) {
-						return 'Division'
-				}
+        if (isDivision(exp)) {
+            return 'Division'
+        }
     },
 
     eval: function () {
